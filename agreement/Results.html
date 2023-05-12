@@ -1,0 +1,18 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{{ block title }}选择的结果{{ endblock }}
+{{ block content }}
+
+<p>你的选择是: {{ player.choice }}</p>
+
+<p>另一位参与人的选择是: {{ player.partner_choice }}</p>
+
+<p>因此你们的生产计划是: {{player.group.plan}}</p>
+
+<p>你现在的财富是 {{player.wealth}}</p>
+
+<p>另一位参与人现在的财富是 {{player.partner_wealth}}</p>
+
+
+{{ endblock }}

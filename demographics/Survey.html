@@ -1,0 +1,107 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{{ block title }}
+个体特征信息
+{{ endblock }}
+{{ block content }}
+
+<p>
+    以下问题用于了解你的一些基本信息。你填写的所有信息仅用于学术研究，绝不会用于任何商业用途。
+    所涉及的任何个人信息我们将进行保密，绝不外泄，感谢你对我们科研的支持。以下所有问题为必填题，填写完问卷，我们将对你支付报酬。
+</p>
+
+
+<style>
+    table.fixed {
+        table-layout: fixed;
+        width: 600px;
+    }
+
+    .center {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    li {
+        margin-bottom: 15px;
+    }
+
+    li:last-child {
+        margin-bottom: 0px;
+    }
+
+</style>
+
+
+<br>
+
+
+<ol>
+    <!--1. 性别-->
+    <li>{{formfield 'gender'}}</li>
+
+    <li>
+        你的出生年月：
+        <input id="id_birth_year" max="2020" min="1990" name="birth_year" required type="number" value="">年
+        <input id="id_birth_month" max="12" min="1" name="birth_month" required type="number" value="">月
+    </li>
+
+    <li>{{formfield 'ethnicity'}}</li>
+
+    <li>{{formfield 'party_member'}}</li>
+
+    <li>{{formfield 'school'}}</li>
+
+    <li>{{formfield 'grade'}}</li>
+
+    <li>
+        你的身高为
+        <input id="id_height" max="2" min="0" name="height" required size="6" type="text" value=""> cm，
+        体重为
+        <input id="id_weight" max="200" min="0" name="weight" required size="6" type="text" value=""> kg。
+    </li>
+
+
+    <li> 你每个月的生活费平均有
+        <input id="id_monthly_expense" max="999999" min="0" name="monthly_expense" required type="number" value="">
+        元。
+    </li>
+
+    <li> 你有
+        <input id="id_big_brothers" max="99" min="0" name="big_brothers" required type="number" value="">
+        个亲哥哥，
+        <input id="id_big_sisters" max="99" min="0" name="big_sisters" required type="number" value="">
+        个亲姐姐，
+        <input id="id_little_brothers" max="99" min="0" name="little_brothers" required type="number" value="">
+        个亲弟弟，
+        <input id="id_little_sisters" max="99" min="0" name="little_sisters" required type="number" value="">
+        个亲妹妹（没有的请填0）。
+    </li>
+
+    <li>{{formfield 'mother_edu'}}</li>
+    <li>{{formfield 'father_edu'}}</li>
+
+    <li>{{formfield 'fam_income'}}</li>
+
+    <li>{{formfield 'hukou'}}</li>
+    <li>
+        你出生的省份（自治区、直辖市）
+        <input id="id_birth_prov" name="birth_prov" required size="6" type="text" value="">
+        （请填省区名前两个字，比如四川、新疆。）
+    </li>
+
+
+</ol>
+
+
+{{ next_button }}
+
+<script>
+    // workaround needed until wtforms #615 is published
+    for (let option of document.querySelectorAll('input[type=radio]')) {
+        option.required = 'required';
+    }
+</script>
+
+{{ endblock }}

@@ -1,0 +1,46 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{{ block title }}
+情绪量表
+{{ endblock }}
+{{ block content }}
+
+<style>
+    table.fixed {table-layout:fixed; width:600px;}
+    .center {
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+<p>这是一个由20个描述不同情感、情绪的词汇组成的量表，请阅读每一个词语并根据你现在的实际感受选择相应的答案。</p>
+<table class="table table-striped fixed center">
+    <tr>
+        <th style="width:160px"></th>
+        <td style="text-align: center">几乎没有</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td style="text-align: center">极其多的</td>
+    </tr>
+    {{ for field in form }}
+    <tr>
+        <th>{{ field.label }}</th>
+        {{ for option in field }}
+        <td style="text-align: center">{{ option }} {{ forloop.counter }}</td>
+        {{ endfor }}
+    </tr>
+    {{ endfor }}
+</table>
+
+{{ next_button }}
+
+<script>
+    // workaround needed until wtforms #615 is published
+    for (let option of document.querySelectorAll('input[type=radio]')) {
+        option.required = 'required';
+    }
+</script>
+
+{{ endblock }}

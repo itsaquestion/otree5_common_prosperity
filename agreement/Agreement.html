@@ -1,0 +1,23 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{{ block title }}选择生产计划{{ endblock }}
+{{ block content }}
+
+<p>你的禀赋是 {{player.wealth}}</p>
+
+<p>现在有2个生产计划，分别是A和B</p>
+
+<p>A: 简介</p>
+
+<p>B: 简介</p>
+
+<p>只有当你们都选择B时，才会执行计划B；任何一个人选择了A，都会执行计划A。</p>
+
+插入一个矩阵
+
+{{ formfield 'choice' }}
+
+{{ next_button }}
+
+{{ endblock }}

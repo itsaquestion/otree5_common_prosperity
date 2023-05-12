@@ -1,0 +1,63 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{{ block title }}第{{player.round_number}}轮竞拍{{ endblock }}
+{{ block content }}
+
+
+<p> 计算机已随机为你匹配另一名参与者。</p>
+
+<p>
+
+    你的初始禀赋是{{player.endowment}}代币，你对手的初始禀赋是{{player.partner_endowment}}代币，标的物的价值是{{player.reward}}代币。
+</p>
+
+<P>
+    你的出价是： <input id="id_bid" max={{player.endowment}} min="0"
+                  name="bid" required type="number" value=""> 代币（请填整数）。
+
+<p>
+    {{ next_button }}
+</p>
+
+
+<p>
+    {{ if player.round_number < 0 }}
+
+<h3>以前的结果</h3>
+
+<table class="table table-bordered table-hover table-condensed">
+
+    <tr>
+        <th>轮次</th>
+        <th>你的禀赋</th>
+        <th>商品价值</th>
+        <th>你的出价</th>
+        <th>对手出价</th>
+        <th>结果</th>
+        <th>赢利</th>
+    </tr>
+
+    {{ for p in player.in_previous_rounds() }}
+
+    <tr>
+        <td>{{ p.round_number }}</td>
+        <td>{{ p.endowment }}</td>
+        <td>{{ p.reward }}</td>
+        <td>{{ p.bid }}</td>
+        <td>{{ p.partner_bid }}</td>
+        <td>{{ if p.is_winner }} 胜 {{else}} 负 {{ endif }}</td>
+        <td>{{ p.payoff|to0}}</td>
+    </tr>
+    {{ endfor }}
+
+    </thead>
+
+</table>
+
+{{ endif }}
+</p>
+
+{{ formfield_errors 'bid' }}
+
+{{ endblock }}

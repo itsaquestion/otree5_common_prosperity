@@ -1,0 +1,46 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+{{ block title }}最终结果（临时）{{ endblock }}
+{{ block content }}
+
+
+<table class="table table-bordered table-hover table-condensed">
+
+    <tr>
+        <th>轮次</th>
+        <th>你的禀赋</th>
+        <th>商品价值</th>
+        <th>你的出价</th>
+        <th>对手出价</th>
+        <th>结果</th>
+        <th>收益</th>
+    </tr>
+    {{ for p in player.in_all_rounds() }}
+
+    <tr>
+        <td>{{ p.round_number }}</td>
+        <td>{{ p.endowment }}</td>
+        <td>{{ p.reward }}</td>
+        <td>{{ p.bid }}</td>
+        <td>{{ p.partner_bid }}</td>
+        <td>{{ if p.is_winner }} 胜 {{else}} 负 {{ endif }}</td>
+        <td>{{ p.payoff}}</td>
+    </tr>
+    {{ endfor }}
+
+    </thead>
+
+</table>
+
+
+支付轮次为{{pay_rounds}}，平均收益为{{total_payoff}}代币，{{}}
+
+{{ formfields }}
+
+<p>
+
+    <!--    {{ next_button }}-->
+</p>
+
+
+{{ endblock }}

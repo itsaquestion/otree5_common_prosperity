@@ -1,0 +1,19 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+{{ block title }}第{{player.round_number}}轮竞拍结果{{ endblock }}
+{{ block content }}
+
+<p>
+
+<li>你的出价是：{{player.bid}}代币。</li>
+<li>你对手的出价是：{{player.partner_bid}}代币。</li>
+<li>你是否获得标的物：{{if player.is_winner}}是{{else}}否{{endif}}。</li>
+<li>你在本轮的收益是：{{player.payoff}}代币。</li>
+
+
+</p>
+{{ next_button }}
+
+
+
+{{ endblock }}

@@ -1,0 +1,23 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{{ block title }}实验说明{{ endblock }}
+{{ block content }}
+
+
+{{ if group.tip }}
+<p>这个组显示提示</p>
+
+{{ else }}
+<p>这个组不显示提示</p>
+
+{{ endif }}
+
+
+你的角色是 {{player.role}}
+
+
+
+
+
+{{ endblock }}

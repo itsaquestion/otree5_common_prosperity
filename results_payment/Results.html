@@ -1,0 +1,31 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{{ block title }}
+实验报酬
+{{ endblock }}
+
+{{ block content }}
+
+<!--{{ participant.vars }}-->
+
+<p>感谢你完成实验全程。</p>
+
+
+<p>你在本实验4个实验任务中的表现如下：</p>
+<p>任务1：赌局任务中，你选择了赌局 {{participant.vars.risk_choice}},
+    你的收益为：{{participant.vars.risk_payoff}} 代币。</p>
+<p>任务2：竞拍游戏第一场中，你的出价是  {{participant.vars.joy_bid}} 代币,
+    你 {{if participant.vars.joy_is_winner}}获得{{else}}未获得{{endif}} 标的物，
+    你的收益为：{{participant.vars.joy_payoff}}代币。</p>
+<p>任务3：竞拍游戏第二场中，你的收益为：{{participant.vars.uc_payoff }}代币。</p>
+<p>任务4：分配决策任务中，计算机随机选中 {{if dg_is_winner }}你的{{else}}你对手的{{endif}} 分配方案，
+    你的收益为：{{dg_payoff}}代币。</p>
+<p>计算机随机抽选了你在任务{{pay_tasks_1.0}}和任务{{pay_tasks_1.1}}中的收益，另外额外奖励10元感谢你完成实验全程，
+    三者加总确定你在本实验的最终报酬是{{final_payment_cny}}（10代币=1元）。</p>
+<p>请在座位上耐心等待，实验员将到你身边为你支付实验报酬。</p>
+
+
+{{ endblock }}
+
+

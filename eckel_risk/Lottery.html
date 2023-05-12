@@ -1,0 +1,52 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{{ block title }}
+赌局任务讲解
+{{ endblock }}
+{{ block content }}
+
+<p>在赌局任务中，你需要从六个赌局中挑选一个（如下表）。
+    表中每一行代表一个赌局，每个赌局有两种收益，每种收益发生的概率是50%。
+</p>
+
+<p>当你选择完某个赌局，计算机将以50%的概率随机确定你在该赌局的收益，并在全部实验任务完成后公布。
+</p>
+<p>现在，<b>请点击相应圆圈选择你想要的赌局</b>。选定后，点击页面下方“<b>确认提交</b>”。
+</p>
+
+<p>如有问题，请举手示意。若无问题，请开始你的决策。</p>
+
+
+</p>
+
+
+<table class="table" style="text-align:center">
+    <tr>
+        <th>序号</th>
+        <th>50%机会获得</th>
+        <th>50%机会获得</th>
+        <th>选择</th>
+
+    </tr>
+
+
+    {{for lottery in C.LOTTERIES}}
+    <tr>
+        <td> {{ forloop.counter }}</td>
+        <td> {{lottery.0}}</td>
+        <td> {{lottery.1}}</td>
+        <td> <input class="form-check-input" id="id_lottery_choice-{{forloop.counter0}}" name="lottery_choice"
+                   required type="radio" value="{{forloop.counter}}"></td>
+    </tr>
+
+    {{endfor}}
+
+</table>
+
+
+<p>
+    <button class="otree-btn-next btn btn-primary">确认提交</button>
+</p>
+
+{{ endblock }}
