@@ -89,6 +89,22 @@ class Agreement(Page):
     form_fields = ['choice']
 
 
+def set_payoff(group:Group):
+    """
+    生产方式：
+    1. A计划保持财富不变
+    2. B计划，双方财富都交给Lucky_Role，乘以系数，由Lucky_Role持有，对方财富为0
+    """
+    if group.plan == 'B':
+
+        total_wealth = sum([p.wealth for p in group.get_players()])
+
+        output = total_wealth * C.M
+
+        group.get_player_by_role(C.LUCKY_ROLE).wealth = output
+        group.get_player_by_role(C.UNLUCKY_ROLE).wealth = 0
+
+
 def production(group: Group):
     """
     根据双方的选择
@@ -119,11 +135,7 @@ def production(group: Group):
 
     # TODO: 这里等于假定，禀赋高的人，同时乘数也大
 
-    if group.plan == 'B':
-        output = (p1.wealth + p2.wealth) * C.M
-
-        group.get_player_by_role(C.LUCKY_ROLE).wealth = output
-        group.get_player_by_role(C.UNLUCKY_ROLE).wealth = 0
+    set_payoff(group)
 
     for p in group.get_players():
         p.partner_wealth = p.get_others_in_group()[0].wealth
@@ -131,6 +143,7 @@ def production(group: Group):
         p.participant.vars['wealth'] = p.wealth
         p.participant.vars['partner_wealth'] = p.partner_wealth
         p.participant.vars['choice'] = p.choice
+        p.participant.vars['partner_choice'] = p.partner_choice
         p.participant.vars['plan'] = group.plan
 
 
@@ -140,7 +153,6 @@ class ResultsWaitPage(WaitPage):
 
 class Results(Page):
     form_model = 'player'
-    form_fields = ['choice', 'partner_choice']
 
     @staticmethod
     def vars_for_template(player: Player):

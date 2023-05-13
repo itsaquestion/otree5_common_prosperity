@@ -1,15 +1,18 @@
 {{ block title }}Results{{ endblock }}
 {{ block content }}
-    <p>
 
-        {{ if player.id_in_group == 1 }}
-            You decided to keep <strong>{{ group.kept }}</strong> for yourself.
-        {{ else }}
-            Participant 1 decided to keep <strong>{{ group.kept }}</strong>, so
-            you got <strong>{{ offer }}</strong>.
-        {{ endif }}
+<p>
+        {{if player.wealth > player.partner_wealth}}
+            你给了对方 {{player.group.transfer}} 。
+
+        {{else}}
+            对方给了你 {{player.group.transfer}}
+
+        {{endif}}
+</p>
+
+<p>你的最终财富是：{{player.payoff}}</p>
 
         {{ next_button }}
-    </p>
-    {{ include C.INSTRUCTIONS_TEMPLATE }}
+
 {{ endblock }}

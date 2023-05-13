@@ -1,8 +1,8 @@
 {{ block title }}Your Decision{{ endblock }}
 {{ block content }}
 
-    <p>你的财富是{{player.wealth}}。</p>
-    {{formfield 'offer'}}
+    你的财富是{{player.wealth}}，另一位参与人的财富是{{player.partner_wealth}}。
+
 
     {{ next_button }}
 

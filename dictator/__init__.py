@@ -1,7 +1,5 @@
 from otree.api import *
 
-
-
 doc = """
 One player decides how to divide a certain amount between himself and the other
 player.
@@ -15,9 +13,6 @@ class C(BaseConstants):
     NAME_IN_URL = 'dictator'
     PLAYERS_PER_GROUP = 2
     NUM_ROUNDS = 1
-    INSTRUCTIONS_TEMPLATE = 'dictator/instructions.html'
-    # Initial amount allocated to the dictator
-    ENDOWMENT = cu(100)
 
 
 class Subsession(BaseSubsession):
@@ -25,50 +20,60 @@ class Subsession(BaseSubsession):
 
 
 class Group(BaseGroup):
-    kept = models.CurrencyField(
-        doc="""Amount dictator decided to keep for himself""",
-        min=0,
-        max=C.ENDOWMENT,
-        label="I will keep",
-    )
+    transfer = models.IntegerField()
+
+
+def offer_max(player):
+    return player.wealth
 
 
 class Player(BasePlayer):
-    pass
+    wealth = models.IntegerField()
+    partner_wealth = models.IntegerField()
 
-
-# FUNCTIONS
-def set_payoffs(group: Group):
-    p1 = group.get_player_by_id(1)
-    p2 = group.get_player_by_id(2)
-    p1.payoff = group.kept
-    p2.payoff = C.ENDOWMENT - group.kept
+    offer = models.IntegerField(
+        doc="""Amount dictator decided to keep for himself""",
+        min=0,
+        label="我会向另一位参与人支付",
+        initial=0
+    )
 
 
 # PAGES
-class Introduction(Page):
-    pass
-
-
-class Offer(Page):
-    form_model = 'group'
-    form_fields = ['kept']
+class Intro(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.id_in_group == 1
+        player.wealth = player.participant.vars['wealth']
+        player.partner_wealth = player.participant.vars['partner_wealth']
+        return True
+
+
+class Offer(Page):
+    form_model = 'player'
+    form_fields = ['offer']
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.wealth > player.partner_wealth
+
+    @staticmethod
+    def before_next_page(player: Player, timeout_happened):
+        partner = player.get_others_in_group()[0]
+        player.payoff = player.wealth - player.offer
+        partner.payoff = partner.wealth + player.offer
+        player.group.transfer = player.offer
 
 
 class ResultsWaitPage(WaitPage):
-    after_all_players_arrive = set_payoffs
+    # after_all_players_arrive = set_payoffs
+    pass
 
 
 class Results(Page):
     @staticmethod
     def vars_for_template(player: Player):
-        group = player.group
-
-        return dict(offer=C.ENDOWMENT - group.kept)
+        return dict(transfer=player.group.transfer)
 
 
-page_sequence = [Introduction, Offer, ResultsWaitPage, Results]
+page_sequence = [Intro, Offer, ResultsWaitPage, Results]
