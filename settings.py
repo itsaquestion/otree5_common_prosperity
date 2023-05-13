@@ -2,17 +2,11 @@ from os import environ
 
 SESSION_CONFIGS = [
     dict(
-        name='agreement',
-        app_sequence=['agreement','dictator'],
+        name='common_prosperity',
+        app_sequence=['agreement', 'dictator'],
         num_demo_participants=2,
         show_tips=True
     ),
-
-    dict(
-        name='dictator',
-        app_sequence=['dictator'],
-        num_demo_participants=2
-    )
 ]
 
 ROOMS = [
