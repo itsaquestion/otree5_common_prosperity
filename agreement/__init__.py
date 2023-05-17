@@ -1,5 +1,6 @@
 import itertools
 import random
+import pandas as pd
 
 from otree.api import *
 
@@ -18,8 +19,28 @@ class C(BaseConstants):
     M = 2
 
     # 2个角色
-    LUCKY_ROLE = 'Lucky Role'
-    UNLUCKY_ROLE = 'Unlucky Role'
+    # LUCKY_ROLE = 'Lucky Role'
+    # UNLUCKY_ROLE = 'Unlucky Role'
+
+    """
+    
+    """
+
+    # endowment
+    ED = dict(high=200,
+              low=100)
+
+    # productivity
+    PROD = [1, 2, 3]
+
+    # transfer
+    TRANS = dict(higer=0.7,
+                 high=0.5,
+                 low=0.25,
+                 lower=0.10)
+
+    # 参数表
+    PARAMS_DF = pd.read_csv('agreement/params.csv').astype(int, errors='ignore')
 
 
 class Subsession(BaseSubsession):
@@ -40,6 +61,13 @@ def creating_session(subsession: Subsession):
 
     tips = itertools.cycle([True, False])
 
+    # 生成一个大列表，按轮次抽取某一行作为参数，或者随机选择一行
+    params = C.PARAMS_DF.query(f"round == {subsession.round_number}").iloc[0].to_dict()
+
+    print(f"{params=}")
+    for g in subsession.get_groups():
+        g.set_prod(params)
+
     for g in subsession.get_groups():
 
         # 每个组随机分配是否提示
@@ -52,23 +80,78 @@ def creating_session(subsession: Subsession):
         else:
             g.tip = next(tips)
 
-        # 每组参与人按角色分配初始财富
-
-        for p in g.get_players():
-            if p.role == C.LUCKY_ROLE:
-                p.wealth = max(C.ED_LIST)
-            else:
-                p.wealth = min(C.ED_LIST)
-
 
 class Group(BaseGroup):
-    tip = models.BooleanField()
+    # params = dict()
+
     plan = models.StringField()
+    # X,Y
+    endow = models.IntegerField()
+
+    # delta x
+    trans = models.FloatField()
+    tip = models.BooleanField()
+
+    alpha_x = models.IntegerField()
+    beta_y = models.IntegerField()
+
+    # X' Y'
+    x2 = models.IntegerField()
+    y2 = models.IntegerField()
+
+    alpha_x2 = models.IntegerField()
+    beta_y2 = models.IntegerField()
+
+    def set_prod(self, params):
+        """Randomly extract two different values from `C.PROD`
+        and set two `player.prod` respectively.
+        """
+        p1, p2 = self.get_players()
+
+        self.endow = params['x']
+        p1.endow = params['x']
+        p2.endow = params['y']
+
+        p1.partner_endow = p2.endow
+        p2.partner_endow = p1.endow
+
+        p1.prod = params['alpha']
+        p2.prod = params['beta']
+
+        p1.partner_prod = p2.prod
+        p2.partner_prod = p1.prod
+
+
+        self.alpha_x = params['alpha_x']
+        self.beta_y = params['beta_y']
+
+        self.trans = params['delta_x']
+
+        self.x2 = params['x2']
+        self.y2 = params['y2']
+
+        self.alpha_x2 = params['alpha_x2']
+        self.beta_y2 = params['beta_y2']
+
+    def calc_player_prop(self):
+        """Set player's properties"""
+        pass
 
 
 class Player(BasePlayer):
-    wealth = models.IntegerField()
-    partner_wealth = models.IntegerField()
+    # endowment = group.endowment
+    endow = models.IntegerField()
+    partner_endow = models.IntegerField()
+
+    # productivity
+    prod = models.IntegerField()
+    partner_prod = models.IntegerField()
+
+    # transfer
+    trans = models.FloatField()
+
+    # allocation
+    alloc = models.FloatField()
 
     choice = models.StringField(
         choices=['A', 'B'],
@@ -80,7 +163,9 @@ class Player(BasePlayer):
 
 
 class Intro(Page):
-    pass
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(test=C.PARAMS_DF.to_html(classes='table table-bordered table-hover table-condensed', index=False))
 
 
 class Agreement(Page):
@@ -88,22 +173,24 @@ class Agreement(Page):
     form_model = 'player'
     form_fields = ['choice']
 
+    @staticmethod
+    def vars_for_template(player: Player):
+        pass
 
-def set_payoff(group:Group):
+
+def set_payoff(group: Group):
     """
     生产方式：
     1. A计划保持财富不变
     2. B计划，双方财富都交给Lucky_Role，乘以系数，由Lucky_Role持有，对方财富为0
     """
+    p1, p2 = group.get_players()
     if group.plan == 'B':
-
-        total_wealth = sum([p.wealth for p in group.get_players()])
-
-        output = total_wealth * C.M
-
-        group.get_player_by_role(C.LUCKY_ROLE).wealth = output
-        group.get_player_by_role(C.UNLUCKY_ROLE).wealth = 0
-
+        p1.endow = group.alpha_x2
+        p2.endow = group.beta_y2
+    else:
+        p1.endow = group.alpha_x
+        p2.endow = group.beta_y
 
 def production(group: Group):
     """
@@ -138,20 +225,20 @@ def production(group: Group):
     set_payoff(group)
 
     for p in group.get_players():
-        p.partner_wealth = p.get_others_in_group()[0].wealth
+        p.partner_endow = p.get_others_in_group()[0].endow
 
-        p.participant.vars['wealth'] = p.wealth
-        p.participant.vars['partner_wealth'] = p.partner_wealth
+        p.participant.vars['endow'] = p.endow
+        p.participant.vars['partner_endow'] = p.partner_endow
         p.participant.vars['choice'] = p.choice
         p.participant.vars['partner_choice'] = p.partner_choice
         p.participant.vars['plan'] = group.plan
 
 
-class ResultsWaitPage(WaitPage):
+class AgreementResultsWaitPage(WaitPage):
     after_all_players_arrive = production
 
 
-class Results(Page):
+class AgreementResults(Page):
     form_model = 'player'
 
     @staticmethod
@@ -159,4 +246,4 @@ class Results(Page):
         return dict(plan=player.group.plan)
 
 
-page_sequence = [Intro, Agreement, ResultsWaitPage, Results]
+page_sequence = [Intro, Agreement, AgreementResultsWaitPage, AgreementResults]

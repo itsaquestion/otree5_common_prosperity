@@ -24,12 +24,12 @@ class Group(BaseGroup):
 
 
 def offer_max(player):
-    return player.wealth
+    return player.endow
 
 
 class Player(BasePlayer):
-    wealth = models.IntegerField()
-    partner_wealth = models.IntegerField()
+    endow = models.IntegerField()
+    partner_endow = models.IntegerField()
 
     offer = models.IntegerField(
         doc="""Amount dictator decided to keep for himself""",
@@ -44,8 +44,8 @@ class Intro(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        player.wealth = player.participant.vars['wealth']
-        player.partner_wealth = player.participant.vars['partner_wealth']
+        player.endow = player.participant.vars['endow']
+        player.partner_endow = player.participant.vars['partner_endow']
         return True
 
 
@@ -55,13 +55,13 @@ class Offer(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.wealth > player.partner_wealth
+        return player.endow > player.partner_endow
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
         partner = player.get_others_in_group()[0]
-        player.payoff = player.wealth - player.offer
-        partner.payoff = partner.wealth + player.offer
+        player.payoff = player.endow - player.offer
+        partner.payoff = partner.endow + player.offer
         player.group.transfer = player.offer
 
 
@@ -76,4 +76,4 @@ class Results(Page):
         return dict(transfer=player.group.transfer)
 
 
-page_sequence = [Intro, Offer, ResultsWaitPage, Results]
+page_sequence = [Offer, ResultsWaitPage, Results]

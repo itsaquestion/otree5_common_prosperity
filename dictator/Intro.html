@@ -1,7 +1,9 @@
 {{ block title }}Your Decision{{ endblock }}
 {{ block content }}
 
-    你的财富是{{player.wealth}}，另一位参与人的财富是{{player.partner_wealth}}。
+{{ block title }}任务二 第<!-- 插入轮次 -->{{subsession.round_number}}轮 第二阶段{{ endblock }}
+
+    你的财富是{{player.endow}}，另一位参与人的财富是{{player.partner_endow}}。
 
 
     {{ next_button }}

@@ -1,22 +1,66 @@
 {% extends "global/Page.html" %}
 {% load otree %}
 
-{{ block title }}选择生产计划{{ endblock }}
+{{ block title }}任务二 第<!-- 插入轮次 -->{{subsession.round_number}}轮 第一阶段{{ endblock }}
 {{ block content }}
 
-<p>你的禀赋是 {{player.wealth}}</p>
 
-<p>现在有2个生产计划，分别是A和B</p>
 
-<p>A: 各自生产，产出系数为1，双方最后获得和自己初始禀赋相同的财富。</p>
+<p>任务二中每轮决策包含两个阶段。</p>
+<p>计算机已随机为你匹配另一名参与者。现在开始第一阶段决策。</p>
+<p>你的资源产出率等于<!-- 插入变量productivity --> {{player.prod}}，
+    另一名参与者的产出率等于<!-- 插入变量productivity --> {{player.partner_prod}}。
+    <!-- 插入产出率 --></p>
+<br>
+<p>你们现在需要在两种资源分配方案之间进行选择。</p>
 
-<p>B: 低禀赋的人，把财产全部交给高禀赋人，他的产出的系数是{{C.M}}，他最终会获得两个参与人初始财富的{{C.M}}倍的财富。</p>
 
-<p>只有当你们都选择B时，才会执行计划B；任何一个人选择了A，都会执行计划A。</p>
+{{ if group.tip }}
+<p>这个组显示提示</p>
 
-插入一个矩阵
+{{ else }}
+<p>这个组不显示提示</p>
 
-{{ formfield "choice" }}
+{{ endif }}
+
+<table class = 'table table-bordered table-hover table-condensed'>
+    <thead>
+    <tr>
+        <th>选择   </th>
+        <th> 资源：（你，配对者）</th>
+        <th> 产出：（你，配对者）</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {{if player.prod < player.partner_prod}}
+    <tr>
+        <td><div class="form-check"><input class="form-check-input" type="radio" id="id_choice-0" name="choice" required="" value="A"> <label for="id_choice-0">方案A</label></div></td>
+        <td align="center">({{player.group.endow}}, {{player.group.endow}})</td>
+        <td align="center">({{player.group.alpha_x}}, {{player.group.beta_y}})</td>
+    </tr>
+    <tr>
+        <td><div class="form-check"><input class="form-check-input" type="radio" id="id_choice-1" name="choice" required="" value="B"> <label for="id_choice-1">方案B</label></div></td>
+        <td align="center">({{player.group.x2}}, {{player.group.y2}})</td>
+        <td align="center">({{player.group.alpha_x2}}, {{player.group.beta_y2}})</td>
+    </tr>
+    {{else}}
+
+    <tr>
+        <td><div class="form-check"><input class="form-check-input" type="radio" id="id_choice-0" name="choice" required="" value="A"> <label for="id_choice-0">方案A</label></div></td>
+        <td align="center">({{player.group.endow}}, {{player.group.endow}})</td>
+        <td align="center">({{player.group.beta_y}}, {{player.group.alpha_x}})</td>
+    </tr>
+    <tr>
+        <td><div class="form-check"><input class="form-check-input" type="radio" id="id_choice-1" name="choice" required="" value="B"> <label for="id_choice-1">方案B</label></div></td>
+        <td align="center">({{player.group.y2}}, {{player.group.x2}})</td>
+        <td align="center">({{player.group.beta_y2}}, {{player.group.alpha_x2}})</td>
+    </tr>
+    {{endif}}
+
+    </tbody>
+</table>
+
 
 
 

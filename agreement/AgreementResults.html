@@ -1,0 +1,20 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{{ block title }}第<!-- 插入轮次 -->{{subsession.round_number}}轮 第一阶段决策结果{{ endblock }}
+{{ block content }}
+
+<p>你的选择是: {{ player.choice }}</p>
+
+<p>你的对手的选择是: {{ player.partner_choice }}</p>
+
+<p>你们在第一阶段的资源分配方案是: {{if player.group.plan == "A"}}有人选A {{else}} 全部选B {{endif}}</p>
+
+<p>你们的资源是: {{player.group.endow}}</p>
+
+<p>你们在第一阶段的产出分别为(你的产出在前):  ({{player.endow}}, {{player.partner_endow}})</p>
+
+
+
+   {{ next_button }}
+{{ endblock }}
