@@ -1,4 +1,5 @@
 # 待办
 
 
-- [ ] 把dictator放到agreement里面
+- [x] 把dictator放到agreement里面
+- [ ] 完成OfferResults

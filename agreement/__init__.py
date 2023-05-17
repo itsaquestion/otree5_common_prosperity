@@ -22,10 +22,6 @@ class C(BaseConstants):
     # LUCKY_ROLE = 'Lucky Role'
     # UNLUCKY_ROLE = 'Unlucky Role'
 
-    """
-    
-    """
-
     # endowment
     ED = dict(high=200,
               low=100)
@@ -102,6 +98,8 @@ class Group(BaseGroup):
     alpha_x2 = models.IntegerField()
     beta_y2 = models.IntegerField()
 
+    offer = models.IntegerField()
+
     def set_prod(self, params):
         """Randomly extract two different values from `C.PROD`
         and set two `player.prod` respectively.
@@ -120,7 +118,6 @@ class Group(BaseGroup):
 
         p1.partner_prod = p2.prod
         p2.partner_prod = p1.prod
-
 
         self.alpha_x = params['alpha_x']
         self.beta_y = params['beta_y']
@@ -161,6 +158,8 @@ class Player(BasePlayer):
 
     partner_choice = models.StringField()
 
+    offer = models.IntegerField(label='')
+
 
 class Intro(Page):
     @staticmethod
@@ -191,6 +190,7 @@ def set_payoff(group: Group):
     else:
         p1.endow = group.alpha_x
         p2.endow = group.beta_y
+
 
 def production(group: Group):
     """
@@ -246,4 +246,36 @@ class AgreementResults(Page):
         return dict(plan=player.group.plan)
 
 
-page_sequence = [Intro, Agreement, AgreementResultsWaitPage, AgreementResults]
+def offer_max(player):
+    return max(player.endow, player.partner_endow)
+
+
+class Offer(Page):
+    form_model = 'player'
+    form_fields = ['offer']
+
+    @staticmethod
+    def is_displayed(player: Player):
+        # return player.endow > player.partner_endow
+        return True
+
+    @staticmethod
+    def before_next_page(player: Player, timeout_happened):
+        partner = player.get_others_in_group()[0]
+        player.payoff = player.endow - player.offer
+        partner.payoff = partner.endow + player.offer
+
+
+
+        # player.group.transfer = player.offer
+
+
+class OfferResultsWaitPage(WaitPage):
+    pass
+
+
+class OfferResult(Page):
+    pass
+
+
+page_sequence = [Intro, Agreement, AgreementResultsWaitPage, AgreementResults, Offer, OfferResultsWaitPage, OfferResult]
