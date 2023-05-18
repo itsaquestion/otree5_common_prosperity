@@ -2,7 +2,7 @@
 {{ block content }}
 
 {{block title}}任务二第<!-- 插入轮次 --> {{subsession.round_number}} 轮决策结果及收益 {{endblock}}
-<p>你们在第一阶段的资源分配方案是：<!-- 插入变量cooperate --> {{if group.plan == "A"}}有人选A {{else}} 全部选B {{endif}}</p>
+<p>你们在第一阶段的资源分配方案是：<!-- 插入变量cooperate --> {{player.group.plan}}</p>
 <p>你们的资源都是: {{group.endow}}</p>
 <p>你们在第一阶段的产出分别为(你的在前)：({{player.endow}},{{player.partner_endow}})</p>
 <p>高产出者在第二阶段返还的产出为：{{group.offer}}</p>

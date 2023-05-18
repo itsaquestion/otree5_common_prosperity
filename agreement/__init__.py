@@ -17,7 +17,6 @@ class C(BaseConstants):
     # 参数表
     PARAMS_DF = pd.read_csv('agreement/params.csv').astype(int, errors='ignore')
 
-
 class Subsession(BaseSubsession):
     pass
 
@@ -31,33 +30,61 @@ def creating_session(subsession: Subsession):
     p: Player
     g: Group
 
-    # 是否乱序看需要
-    # subsession.group_randomly()
+    """
+    所有人循环分配treatment，因此奇数和偶数分别是一个treatment
+    """
 
-    tips = itertools.cycle([True, False])
+    treatments = ['cue', 'no_cue']
+    tm = itertools.cycle(treatments)
+    for p in subsession.get_players():
+        p.treatment = next(tm)
 
-    # 生成一个大列表，按轮次抽取某一行作为参数，或者随机选择一行
+    """
+    对同一个treatment的player，进行乱序，重组，再组成完整的group matrix
+    
+    """
+
+    n = len(subsession.get_players())
+    id_list = (list(range(1, n + 1)))
+
+    p = subsession.get_players()[0]
+
+    cue_list = [p.participant.id_in_session for p in subsession.get_players() if p.treatment == 'cue']
+    no_cue_list = [p.participant.id_in_session for p in subsession.get_players() if p.treatment == 'no_cue']
+
+    def group_elements(original_list):
+        """
+        对一个List乱序，然后22组合；
+        """
+        random.shuffle(original_list)
+
+        new_list = []
+
+        for i in range(0, len(original_list), 2):
+            new_list.append(original_list[i:i + 2])
+
+        return new_list
+
+    group_matrix = group_elements(cue_list) + group_elements(no_cue_list)
+    print(group_matrix)
+
+    subsession.set_group_matrix(group_matrix)
+
+    """
+    读取本轮参数，然后写入每个组以及参与人中
+    """
+    # 生成一个大列表，按轮次,抽取某一行作为参数
     params = C.PARAMS_DF.query(f"round == {subsession.round_number}").iloc[0].to_dict()
-
     print(f"{params=}")
+
     for g in subsession.get_groups():
         g.set_prod(params)
-
-    for g in subsession.get_groups():
-
-        # 每个组随机分配是否提示
-        # 采用循环模式
-
-        # 如果在配置中指定了show_tips与否，则按配置
-        # 否则，则循环分配tip
-        if 'show_tips' in subsession.session.config:
-            g.tip = subsession.session.config['show_tips']
-        else:
-            g.tip = next(tips)
 
 
 class Group(BaseGroup):
     # params = dict()
+
+    treatment = models.StringField()
 
     plan = models.StringField()
     # X,Y
@@ -77,13 +104,15 @@ class Group(BaseGroup):
     alpha_x2 = models.IntegerField()
     beta_y2 = models.IntegerField()
 
-    offer = models.IntegerField()
+    offer = models.FloatField()
 
     def set_prod(self, params):
         """Randomly extract two different values from `C.PROD`
         and set two `player.prod` respectively.
         """
         p1, p2 = self.get_players()
+
+        self.treatment = p1.treatment
 
         self.endow = params['x']
         p1.endow = params['x']
@@ -116,6 +145,9 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     # endowment = group.endowment
+
+    treatment = models.StringField()
+
     endow = models.IntegerField()
     partner_endow = models.IntegerField()
 
@@ -137,19 +169,23 @@ class Player(BasePlayer):
 
     partner_choice = models.StringField()
 
-    offer = models.IntegerField(label='')
+    offer = models.FloatField(label='',max_length=10)
 
-    profit = models.IntegerField()
-    partner_profit = models.IntegerField()
+    profit = models.FloatField()
+    partner_profit = models.FloatField()
+
 
 class Intro(Page):
     @staticmethod
     def vars_for_template(player: Player):
-        return dict(test=C.PARAMS_DF.to_html(classes='table table-bordered table-hover table-condensed', index=False))
+        params_dict = C.PARAMS_DF.to_html(classes='table table-bordered table-hover table-condensed', index=False)
+        group_matrix = player.subsession.get_group_matrix()
+        return dict(gm=group_matrix, test=params_dict)
 
     @staticmethod
     def is_displayed(player: Player):
         return player.subsession.round_number == 1
+
 
 class Agreement(Page):
     """一致同意页面"""
@@ -244,6 +280,7 @@ class Offer(Page):
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
         pass
+
 
 class OfferResultsWaitPage(WaitPage):
     @staticmethod

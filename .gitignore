@@ -13,3 +13,4 @@ __pycache__/
 *.otreezip
 test_results/
 participant_data/
+~$*

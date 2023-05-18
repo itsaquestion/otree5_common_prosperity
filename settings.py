@@ -5,7 +5,11 @@ SESSION_CONFIGS = [
         name='common_prosperity',
         app_sequence=['agreement'],
         num_demo_participants=2,
-        show_tips=True
+    ),
+    dict(
+        name='common_prosperity_8p',
+        app_sequence=['agreement'],
+        num_demo_participants=8,
     ),
 ]
 
