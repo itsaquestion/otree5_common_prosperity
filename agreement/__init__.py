@@ -12,28 +12,7 @@ doc = """
 class C(BaseConstants):
     NAME_IN_URL = 'agreement'
     PLAYERS_PER_GROUP = 2
-    NUM_ROUNDS = 1
-
-    ED_LIST = [200, 100]
-
-    M = 2
-
-    # 2个角色
-    # LUCKY_ROLE = 'Lucky Role'
-    # UNLUCKY_ROLE = 'Unlucky Role'
-
-    # endowment
-    ED = dict(high=200,
-              low=100)
-
-    # productivity
-    PROD = [1, 2, 3]
-
-    # transfer
-    TRANS = dict(higer=0.7,
-                 high=0.5,
-                 low=0.25,
-                 lower=0.10)
+    NUM_ROUNDS = 3
 
     # 参数表
     PARAMS_DF = pd.read_csv('agreement/params.csv').astype(int, errors='ignore')
@@ -168,6 +147,9 @@ class Intro(Page):
     def vars_for_template(player: Player):
         return dict(test=C.PARAMS_DF.to_html(classes='table table-bordered table-hover table-condensed', index=False))
 
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.subsession.round_number == 1
 
 class Agreement(Page):
     """一致同意页面"""
@@ -261,22 +243,24 @@ class Offer(Page):
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
-        partner = player.get_others_in_group()[0]
-        player.profit = player.endow - player.offer
-        partner.partner_profit = player.profit
-
-        partner.profit = partner.endow + player.offer
-        player.partner_profit = partner.profit
-        # player.group.transfer = player.offer
-        if player.endow > player.partner_endow:
-            player.group.offer = player.offer
-
+        pass
 
 class OfferResultsWaitPage(WaitPage):
     @staticmethod
     def after_all_players_arrive(group: Group):
         # group.offer = max(group.get_players(), key=lambda p: p.endow).offer
-        pass
+        for player in group.get_players():
+            if player.endow > player.partner_endow:
+                player.group.offer = player.offer
+
+                partner = player.get_others_in_group()[0]
+
+                player.profit = player.endow - player.offer
+                partner.partner_profit = player.profit
+
+                partner.profit = partner.endow + player.offer
+                player.partner_profit = partner.profit
+                # player.group.transfer = player.offer
 
 
 class OfferResults(Page):

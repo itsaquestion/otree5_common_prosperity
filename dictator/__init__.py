@@ -1,11 +1,7 @@
 from otree.api import *
 
 doc = """
-One player decides how to divide a certain amount between himself and the other
-player.
-See: Kahneman, Daniel, Jack L. Knetsch, and Richard H. Thaler. "Fairness
-and the assumptions of economics." Journal of business (1986):
-S285-S300.
+简单独裁者博弈
 """
 
 
