@@ -1,27 +1,15 @@
 {{ block title }}Results{{ endblock }}
 {{ block content }}
 
-<p>
-        {{if player.wealth > player.partner_wealth}}
-            你给了对方 {{player.group.transfer}} 。
+{{block title}}任务二第<!-- 插入轮次 --> {{subsession.round_number}} 轮决策结果及收益 {{endblock}}
+<p>你们在第一阶段的资源分配方案是：<!-- 插入变量cooperate --> {{if group.plan == "A"}}有人选A {{else}} 全部选B {{endif}}</p>
+<p>你们的资源都是: {{group.endow}}</p>
+<p>你们在第一阶段的产出分别为(你的在前)：({{player.endow}},{{player.partner_endow}})</p>
+<p>高产出者在第二阶段返还的产出为：{{group.offer}}</p>
+<p>你们在本轮两阶段决策的最终收益为(你的在前)： ({{player.profit}}, {{player.partner_profit}})</p>
 
-        {{else}}
-            对方给了你 {{player.group.transfer}}
+<p>如果有疑问，请举手示意。若没有问题，请点击下一页开始下一轮决策。</p>
 
-        {{endif}}
-</p>
-
-<p>你的最终财富是：{{player.payoff}}</p>
-
-
-<p>标题：任务二第<!-- 插入轮次 --> 轮决策结果及收益</p>
-<p>你们在第一阶段的资源分配方案是：<!-- 插入变量cooperate --></p>
-你们的资源分别为：（<!-- 插入变量allocation-->，<!-- 插入变量allocation-->）
-你们在第一阶段的产出分别为：（<!-- 插入变量outcome-->，<!-- 插入变量outcome-->）
-高产出者在第二阶段返还的产出为：<!-- 插入return -->
-你们在本轮两阶段决策的最终收益为：（<!-- 插入revenue -->，<!-- 插入revenue -->）
-
-如果有疑问，请举手示意。若没有问题，请点击下一页开始下一轮决策。
-        {{ next_button }}
+{{ next_button }}
 
 {{ endblock }}

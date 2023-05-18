@@ -160,6 +160,8 @@ class Player(BasePlayer):
 
     offer = models.IntegerField(label='')
 
+    profit = models.IntegerField()
+    partner_profit = models.IntegerField()
 
 class Intro(Page):
     @staticmethod
@@ -220,8 +222,6 @@ def production(group: Group):
     # 假定低ed的人，把全部财富给高ed的人
     # 最终产品就是两者的禀赋之和，乘以系数M
 
-    # TODO: 这里等于假定，禀赋高的人，同时乘数也大
-
     set_payoff(group)
 
     for p in group.get_players():
@@ -262,20 +262,26 @@ class Offer(Page):
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
         partner = player.get_others_in_group()[0]
-        player.payoff = player.endow - player.offer
-        partner.payoff = partner.endow + player.offer
+        player.profit = player.endow - player.offer
+        partner.partner_profit = player.profit
 
-
-
+        partner.profit = partner.endow + player.offer
+        player.partner_profit = partner.profit
         # player.group.transfer = player.offer
+        if player.endow > player.partner_endow:
+            player.group.offer = player.offer
 
 
 class OfferResultsWaitPage(WaitPage):
+    @staticmethod
+    def after_all_players_arrive(group: Group):
+        # group.offer = max(group.get_players(), key=lambda p: p.endow).offer
+        pass
+
+
+class OfferResults(Page):
     pass
 
 
-class OfferResult(Page):
-    pass
-
-
-page_sequence = [Intro, Agreement, AgreementResultsWaitPage, AgreementResults, Offer, OfferResultsWaitPage, OfferResult]
+page_sequence = [Intro, Agreement, AgreementResultsWaitPage, AgreementResults, Offer, OfferResultsWaitPage,
+                 OfferResults]

@@ -2,4 +2,5 @@
 
 
 - [x] 把dictator放到agreement里面
-- [ ] 完成OfferResults
+- [x] 完成OfferResults
+- [ ] 多轮
