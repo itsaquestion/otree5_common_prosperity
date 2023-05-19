@@ -204,7 +204,9 @@ class Agreement(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        pass
+        #params_dict = C.PARAMS_DF.to_html(classes='table table-bordered table-hover table-condensed', index=False)
+        group_matrix = player.subsession.get_group_matrix()
+        return dict(gm=group_matrix)
 
 
 def set_payoff(group: Group):

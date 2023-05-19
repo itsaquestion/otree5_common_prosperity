@@ -2,11 +2,16 @@
 {{ block content }}
 
 {{block title}}任务二第<!-- 插入轮次 --> {{subsession.round_number}} 轮决策结果及收益 {{endblock}}
-<p>你们在第一阶段的资源分配方案是：<!-- 插入变量cooperate --> {{player.group.plan}}</p>
-<p>你们的资源都是: {{group.endow}}</p>
-<p>你们在第一阶段的产出分别为(你的在前)：({{player.endow}},{{player.partner_endow}})</p>
-<p>高产出者在第二阶段返还的产出为：{{group.offer}}</p>
-<p>你们在本轮两阶段决策的最终收益为(你的在前)： ({{player.profit}}, {{player.partner_profit}})</p>
+
+{{if player.endow > player.partner_endow}}
+
+<p>你已转移<!-- 插入return --> {{group.offer}} 代币给配对者。</p>
+<p>你在本轮最终获得收益为<!-- 插入revenue --> {{player.profit}} 代币。</p>
+{{else}}
+
+<p>配对者已转移<!-- 插入return --> {{group.offer}} 代币给你。</p>
+<p>你在本轮最终获得收益为<!-- 插入revenue --> {{player.profit}} 代币。</p>
+{{endif}}
 
 <p>如果有疑问，请举手示意。若没有问题，请点击下一页开始下一轮决策。</p>
 
