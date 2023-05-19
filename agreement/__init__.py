@@ -34,10 +34,12 @@ def creating_session(subsession: Subsession):
     所有人循环分配treatment，因此奇数和偶数分别是一个treatment
     """
 
-    treatments = ['cue', 'no_cue']
+    treatments = ['cue', 'cue', 'no_cue', 'no_cue']
     tm = itertools.cycle(treatments)
     for p in subsession.get_players():
         p.treatment = next(tm)
+
+    print([p.treatment for p in subsession.get_players()])
 
     """
     对同一个treatment的player，进行乱序，重组，再组成完整的group matrix

@@ -10,5 +10,7 @@
 # Treatment
 - [x] 有2个treatment，将所有参与人随机分成2半,treatment内随机
 - [x] 每轮随机更换对手。
+- [x] 改成 cue cue no_cue no_cue
 
-
+# Bug
+- [ ] 两人版本有bug?
