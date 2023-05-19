@@ -4,16 +4,13 @@
 {{ block title }}第<!-- 插入轮次 -->{{subsession.round_number}}轮 第一阶段决策结果{{ endblock }}
 {{ block content }}
 
-<p>你的选择是: {{ player.choice }}</p>
+<p>你选择了 {{ player.choice }}，配对者选择了 {{ player.partner_choice }}。</p>
 
-<p>你的对手的选择是: {{ player.partner_choice }}</p>
+<p>所以，第一阶段的分配方案是 {{player.group.plan}}。</p>
 
-<p>你们在第一阶段的资源分配方案是: {{player.group.plan}}</p>
+<p>你的资源是{{player.endow2}}，实现的收益是<!-- 插入变量outcome-->{{player.endow}}代币。</p>
 
-<p>你们的资源都是: {{player.group.endow}}</p>
-
-<p>你们在第一阶段的产出分别为(你的产出在前):  ({{player.endow}}, {{player.partner_endow}})</p>
-
+<p>配对者资源是 {{player.partner_endow2}}，实现的收益是<!-- 插入变量outcome-->{{player.partner_endow}}代币。 </p>
 
 
    {{ next_button }}

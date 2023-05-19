@@ -3,29 +3,33 @@
 
 {{ block title }}任务二 第<!-- 插入轮次 -->{{subsession.round_number}}轮 第二阶段{{ endblock }}
 
-<p>你的财富是{{player.endow}}。</p>
-
-<p>任务二中每轮决策包含两个阶段。</p>
 <p>现在开始第二阶段决策。</p>
-<p>你的资源产出率等于<!-- 插入变量productivity --> {{player.prod}}，
-    你的配对者的产出率等于<!-- 插入变量productivity --> 。{{player.partner_prod}}</p>
-<p>你们在第一阶段的资源都是 {{group.endow}}<!-- 插入变量allocation--> ，<!-- 插入变量allocation--> </p>
-<p>你们在第一阶段的产出分别为(你的产出在前): ({{player.endow}}, {{player.partner_endow}})</p>
+<p>你已经实现的收益是 {{player.endow}}。</p>
 
 <!-- 插入独裁者 -->
 
 {{if player.endow > player.partner_endow}}
 
-<p>你的产出较高，你的配对者产出较低。你需要决定从你的产出中分多少给你的配对者。</p>
-<p>现在，请填写你的决策：</p>
-<p>你会分给对方多少代币：</p>
-{{formfield "offer"}}
+<p>你的收益较高，配对者收益较低。</p>
+    {{formfield "offer"}}
+
+<div hidden>
+<input type="text" class="form-control" inputmode="decimal" id="id_expects" min="0" name="expects" required="" value="0">
+
+<input type="text" class="form-control" inputmode="decimal" id="id_guess" min="0" name="guess" required="" value="0">
+</div>
 {{else}}
 
-<p>你的产出较低，你的配对者产出较高。请你猜测你的配对者将从他的产出中分多少给你。</p>
-<p>现在，请填写你的猜测：</p>
-<p>对方会分给你多少代币：</p>
-{{formfield "offer"}}
+<p>你的收益较低，配对者收益较高。</p>
+<p>请问：</p>
+<div hidden>
+
+<input type="text" class="form-control" inputmode="decimal" id="id_offer" max="200" min="0" name="offer" required="" value="0">
+</div>
+    {{formfield "expects"}}
+    {{formfield "guess"}}
+
+{{else}}
 {{endif}}
 
 

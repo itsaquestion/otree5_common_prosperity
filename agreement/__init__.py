@@ -17,6 +17,7 @@ class C(BaseConstants):
     # 参数表
     PARAMS_DF = pd.read_csv('agreement/params.csv').astype(int, errors='ignore')
 
+
 class Subsession(BaseSubsession):
     pass
 
@@ -150,8 +151,13 @@ class Player(BasePlayer):
 
     treatment = models.StringField()
 
+    # 初始资源 和 生产后的最后资源
     endow = models.IntegerField()
     partner_endow = models.IntegerField()
+
+    # 分配后，生产前的资源
+    endow2 = models.IntegerField()
+    partner_endow2 = models.IntegerField()
 
     # productivity
     prod = models.IntegerField()
@@ -171,7 +177,9 @@ class Player(BasePlayer):
 
     partner_choice = models.StringField()
 
-    offer = models.FloatField(label='',max_length=10)
+    offer = models.FloatField(label='你愿意转移多少代币给配对者：')
+    expects = models.FloatField(label='1. 你希望配对者转移多少代币给你：')
+    guess = models.FloatField(label='2. 你猜测配对者实际将转移多少代币给你：')
 
     profit = models.FloatField()
     partner_profit = models.FloatField()
@@ -207,11 +215,20 @@ def set_payoff(group: Group):
     """
     p1, p2 = group.get_players()
     if group.plan == 'B':
+        p1.endow2 = group.x2
         p1.endow = group.alpha_x2
+
+        p2.endow2 = group.y2
         p2.endow = group.beta_y2
     else:
+        p1.endow2 = p1.endow
         p1.endow = group.alpha_x
+
+        p2.endow2 = p2.endow
         p2.endow = group.beta_y
+
+    p1.partner_endow2 = p2.endow2
+    p2.partner_endow2 = p1.endow2
 
 
 def production(group: Group):
@@ -272,7 +289,7 @@ def offer_max(player):
 
 class Offer(Page):
     form_model = 'player'
-    form_fields = ['offer']
+    form_fields = ['offer', 'expects', 'guess']
 
     @staticmethod
     def is_displayed(player: Player):
