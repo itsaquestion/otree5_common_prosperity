@@ -12,7 +12,7 @@ doc = """
 class C(BaseConstants):
     NAME_IN_URL = 'agreement'
     PLAYERS_PER_GROUP = 2
-    NUM_ROUNDS = 3
+    NUM_ROUNDS = 5
 
     # 参数表
     PARAMS_DF = pd.read_csv('agreement/params.csv').astype(int, errors='ignore')
@@ -324,6 +324,8 @@ class OfferResultsWaitPage(WaitPage):
 class OfferResults(Page):
     pass
 
+class Understand(Page):
+    pass
 
-page_sequence = [Intro, Agreement, AgreementResultsWaitPage, AgreementResults, Offer, OfferResultsWaitPage,
+page_sequence = [Intro, Understand, Agreement, AgreementResultsWaitPage, AgreementResults, Offer, OfferResultsWaitPage,
                  OfferResults]

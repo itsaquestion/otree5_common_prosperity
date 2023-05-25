@@ -1,0 +1,190 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{{ block title }}问题测试{{ endblock }}
+
+
+{{ block content }}
+
+<style>
+
+    label {
+        padding-right: 40px;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.7);
+        transition: opacity 500ms;
+        visibility: hidden;
+        opacity: 0;
+    }
+
+    .overlay:target {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .popup {
+        margin: 70px auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 5px;
+        width: 30%;
+        position: relative;
+        transition: all 5s ease-in-out;
+    }
+
+    .popup h2 {
+        margin-top: 0;
+        color: #333;
+        font-family: Tahoma, Arial, sans-serif;
+    }
+
+    .popup .close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        transition: all 200ms;
+        font-size: 30px;
+        font-weight: bold;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .popup .close:hover {
+        color: #06D85F;
+    }
+
+    .popup .content {
+        max-height: 30%;
+        overflow: auto;
+    }
+
+    @media screen and (max-width: 700px) {
+        .box {
+            width: 70%;
+        }
+
+        .popup {
+            width: 70%;
+        }
+    }
+</style>
+
+
+<script>
+
+    function blink() {
+        let f = document.getElementById('wrong_ans');
+        setTimeout(function () {
+            f.style.display = (f.style.display === 'none' ? '' : 'none');
+            setTimeout(function () {
+                f.style.display = (f.style.display === 'none' ? '' : 'none');
+            }, 200);
+        }, 200);
+    }
+
+    function check_radio(id) {
+        return (document.getElementById(id).checked)
+    }
+
+
+    function check() {
+        if (check_radio("q12") === true &&
+            check_radio("q23") === true &&
+            check_radio("q32") === true &&
+            check_radio("q41") === true &&
+            check_radio("q51") === true
+        ) {
+            document.getElementById("next").style.display = "block";
+            document.getElementById("check").style.display = "none";
+            document.getElementById("wrong_ans").style.display = "none";
+        } else {
+            blink()
+            document.getElementById("wrong_ans").style.display = "block";
+        }
+
+    }
+
+
+</script>
+
+
+<p>为了确保你完全了解了竞拍任务的玩法，请完成下面一些问题。</p>
+<p>在某轮决策中，你的资源收益率为α，配对者的收益率为β。在第一阶段资源分配方案选择决策中，方案A为（E，E），方案B为（E1，E2）。</p>
+
+<ol>
+    <li>你和配对者在方案B中的收益为：</li>
+    <div>
+        <label><input type="radio" id="q11" name='q1'>(E1, E2)</label>
+        <label><input type="radio" id="q12" name='q1'>(αE1, βE2)</label>
+        <label><input type="radio" id="q13" name='q1'>(βE1, βE2)</label>
+
+    </div>
+
+    <br>
+
+    <div>
+        <li>若你和配对者在第一阶段都选择了方案B，则你们的收益为：</li>
+        <label><input type="radio" id="q21" name='q2'>(E1, E2)</label>
+        <label><input type="radio" id="q22" name='q2'>(αE1, βE2)</label>
+        <label><input type="radio" id="q23" name='q2'>(βE1, βE2)</label>
+    </div>
+
+
+    <br>
+
+    <div>
+        <li>若你们在第一阶段选择不一致（你选了方案A，配对者选择了方案B），你们的收益为：</li>
+        <label><input type="radio" id="q31" name='q3'>(E, E)</label>
+        <label><input type="radio" id="q32" name='q3'>(αE, βE)</label>
+        <label><input type="radio" id="q33" name='q3'>(αE1, βE2)</label>
+
+    </div>
+
+    <br>
+
+    <li>若你的收益大于配对者的收益，第二阶段由谁做决策？</li>
+    <div>
+        <label><input type="radio" id="q41" name='q4'>你</label>
+        <label><input type="radio" id="q42" name='q4'>配对者</label>
+
+    </div>
+
+
+    <li>下一轮，计算机会为你重新匹配新的参与者吗？</li>
+    <div>
+        <label><input type="radio" id="q51" name='q5'>会</label>
+        <label><input type="radio" id="q52" name='q5'>不会</label>
+
+    </div>
+
+</ol>
+
+
+<p>
+  如果你在答题中遇到问题，请举手示意，我们将到你面前为你解答。请点击“检查”按钮，测试答案是否正确。若全部问题回答正确，则会出现“下一页”按钮，请点击并开始任务。
+</p>
+<div id="check">
+    <p>
+        <button type='button' class="btn btn-success" onclick="check()">检查</button>
+    </p>
+
+</div>
+
+
+<div id='next' style="display:none;">
+    {{ next_button }}
+</div>
+
+<div id='wrong_ans' style="display:none;">
+    <p style="color: darkslateblue">答案不完全正确，请检查。</p>
+</div>
+
+
+{{ endblock }}
