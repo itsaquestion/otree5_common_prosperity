@@ -1,0 +1,36 @@
+{% extends "global/Page.html" %}
+{% load otree %}
+
+{{ block title }}
+任务三
+{{ endblock }}
+{{ block content }}
+
+
+<p>在任务一中，你将进行10个彩票选择决策。每个决策中A和B两种彩票，你需要从两种彩票中选择一种。选择彩票A你将以一定概率得到20代币或16代币；选择彩票B则以一定概率得到39.5代币或1代币。</p>
+<p>在实验结束时，计算机将从10个决策中随机选择1个确定你在本任务的收益。若你在被选中的决策中选择了彩票A，你将以对应概率得到20代币或16代币；若你选择了彩票B，你将以对应概率得到39.5代币或1代币。</p>
+<p>下表1-10行对应需要完成的10个决策，每个决策都与你的收益相关，因此请认真完成每个选择。</p>
+<p>请点击相应 ◯ 进行彩票选择。完成后，点击页面下方“确认提交”。</p>
+<p>如有问题，请举手示意。</p>
+
+
+<table class="table" style="text-align: center">
+    <tr>
+        <th>决策</th>
+        <th>彩票A</th>
+        <th>彩票B</th>
+
+    </tr>
+    {{ for field in form }}
+        <tr>
+            <th>{{ field.label }}</th>
+            {{ for choice in field }}
+                <td>{{ choice }} {{choice.label}}</td>
+            {{ endfor }}
+        </tr>
+    {{ endfor }}
+</table>
+
+    <button class="otree-btn-next btn btn-primary">确认提交</button>
+
+{{ endblock }}

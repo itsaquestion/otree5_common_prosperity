@@ -2,13 +2,18 @@ from os import environ
 
 SESSION_CONFIGS = [
     dict(
+        name='risk1',
+        app_sequence=['risk1'],
+        num_demo_participants=1,
+    ),
+    dict(
         name='common_prosperity',
-        app_sequence=['agreement'],
+        app_sequence=['risk1', 'agreement', 'risk3'],
         num_demo_participants=2,
     ),
     dict(
         name='common_prosperity_8p',
-        app_sequence=['agreement'],
+        app_sequence=['risk1', 'agreement', 'risk3'],
         num_demo_participants=8,
     ),
 ]
