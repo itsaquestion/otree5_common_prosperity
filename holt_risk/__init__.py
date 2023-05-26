@@ -8,9 +8,10 @@ Your app description
 
 
 class C(BaseConstants):
-    NAME_IN_URL = 'risk3'
+    NAME_IN_URL = 'holt_risk'
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 1
+    TITLE = '任务一'
 
 
 class Subsession(BaseSubsession):
@@ -34,11 +35,6 @@ def make_choice(i):
 
 
 class Player(BasePlayer):
-    lottery_choice = models.IntegerField(
-        choices=list(range(1, 7)),
-        widget=widgets.RadioSelectHorizontal
-    )
-
     lottery_1 = make_choice(1)
     lottery_2 = make_choice(2)
     lottery_3 = make_choice(3)
@@ -58,12 +54,16 @@ class Lottery(Page):
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
-        pass
-        # lottery = C.LOTTERIES[player.lottery_choice - 1]
-        # player.payoff = lottery[0] if random.random() < 0.5 else lottery[1]
+        i = random.choice(list(range(1, 11)))
+        choice = getattr(player, "lottery_" + str(i))
+        profit = 0.0
 
-        # player.participant.vars['risk_choice'] = player.lottery_choice
-        # player.participant.vars['risk_payoff'] = player.payoff
+        if choice == "A":
+            profit = 20 if random.random() < i / 10 else 16
+        else:
+            profit = 39.5 if random.random() < i / 10 else 1
+
+        player.participant.vars[C.NAME_IN_URL] = dict(i=i, choice=choice, profit=profit)
 
 
 page_sequence = [Lottery]
